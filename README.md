@@ -62,3 +62,72 @@ Target Variable:
 - Distribusi Usia memperlihatkan bahwa pasien dengan PCOS cenderung berada pada rentang usia muda hingga awal 30-an.
 - Boxplot BMI, Testosteron, dan Jumlah Folikel Antral menunjukkan bahwa nilai-nilai ini cenderung lebih tinggi pada pasien yang didiagnosis PCOS.
 - Heatmap Korelasi mengindikasikan adanya korelasi positif yang signifikan antara level testosteron dan jumlah folikel antral dengan diagnosis PCOS.
+
+## Data Preparation
+Pada tahap ini, dilakukan sejumlah proses persiapan data agar dapat digunakan secara optimal oleh algoritma machine learning. Pertama, fitur kategori dikonversi menjadi numerik menggunakan teknik encoding seperti LabelEncoder, agar dapat diproses oleh model. Selanjutnya, dilakukan standarisasi menggunakan StandardScaler untuk menyamakan skala antar fitur, yang penting untuk model berbasis jarak atau regresi.
+
+Kemudian, dilakukan reduksi dimensi dengan Principal Component Analysis (PCA) untuk menyederhanakan kompleksitas data tanpa kehilangan informasi penting. Terakhir, dataset dibagi menggunakan fungsi train_test_split dengan rasio 80:20 menjadi data latih dan data uji, guna melatih dan mengevaluasi model secara adil.
+
+Langkah-langkah ini diperlukan untuk meningkatkan performa model, mencegah overfitting, serta memastikan data dalam kondisi bersih dan terstruktur.
+
+## Modeling
+
+Pada tahap ini, dilakukan pembangunan model machine learning untuk menyelesaikan permasalahan klasifikasi diagnosis PCOS. Empat algoritma digunakan dalam proses ini, yaitu **Logistic Regression**, **Decision Tree**, **Random Forest**, dan **XGBoost**. Pemilihan keempat algoritma ini didasarkan pada pertimbangan performa, interpretabilitas, serta kemampuan dalam menangani dataset dengan fitur numerik dan kategorikal.
+
+**Logistic Regression** digunakan sebagai baseline karena bersifat sederhana dan mudah diinterpretasikan. Model ini cocok digunakan untuk permasalahan klasifikasi biner, namun memiliki keterbatasan dalam menangani data yang kompleks dan bersifat non-linear.
+
+**Decision Tree** dipilih karena kemampuannya dalam menangani kombinasi fitur numerik dan kategorikal serta kemudahan interpretasi model. Namun, model ini cenderung overfitting jika tidak dilakukan pemangkasan atau pengaturan parameter yang tepat.
+
+**Random Forest**, sebagai model ensemble berbasis banyak pohon keputusan, memiliki keunggulan dalam meningkatkan akurasi dan mengurangi risiko overfitting. Untuk meningkatkan performanya, dilakukan proses tuning terhadap beberapa parameter seperti jumlah estimator, kedalaman maksimum pohon, dan jumlah sampel minimum untuk pemisahan dan daun.
+
+**XGBoost** dipilih karena dikenal memiliki performa yang sangat baik pada berbagai permasalahan klasifikasi. Selain itu, algoritma ini juga dilengkapi dengan fitur regularisasi untuk mencegah overfitting. Setelah membangun model awal, dilakukan hyperparameter tuning untuk meningkatkan hasil prediksi, termasuk penyesuaian terhadap jumlah estimasi, laju pembelajaran, kedalaman maksimum pohon, dan rasio subsampling.
+
+Setelah dilakukan pelatihan dan evaluasi terhadap seluruh model, diperoleh hasil bahwa **XGBoost tanpa tuning memberikan performa terbaik** dengan *accuracy* sebesar **96%**, *precision* **91,89%**, *recall* **87,18%**, dan *F1-score* **89,47%**. Meskipun model XGBoost yang telah dituning masih menunjukkan performa tinggi, terjadi sedikit penurunan pada accuracy dan F1-score dibandingkan model awal, sehingga tuning tidak selalu menjamin peningkatan performa secara signifikan.
+
+Dengan mempertimbangkan keseimbangan antara akurasi dan kemampuan dalam mendeteksi kasus positif yang tinggi—yang sangat penting dalam konteks diagnosis medis—maka **model XGBoost tanpa tuning dipilih sebagai model terbaik** dalam proyek ini.
+
+
+## Evaluation
+
+Untuk mengevaluasi performa model dalam proyek klasifikasi diagnosis PCOS ini, digunakan beberapa metrik evaluasi yang umum digunakan dalam permasalahan klasifikasi biner, yaitu **accuracy**, **precision**, **recall**, dan **F1 score**. Pemilihan metrik ini mempertimbangkan konteks medis dari proyek, di mana kesalahan klasifikasi terutama terhadap kasus positif (yaitu pasien dengan risiko PCOS) dapat berdampak serius.
+
+### Penjelasan Metrik Evaluasi
+
+- **Accuracy** mengukur proporsi prediksi yang benar dibandingkan dengan total keseluruhan data. Rumus:
+
+  $$
+  \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+  $$
+
+- **Precision** adalah rasio antara jumlah prediksi positif yang benar (*True Positive*) terhadap seluruh prediksi positif. Precision penting ketika *false positive* harus diminimalkan, misalnya untuk menghindari overdiagnosis.
+
+  $$
+  \text{Precision} = \frac{TP}{TP + FP}
+  $$
+
+- **Recall** (atau *Sensitivity*) mengukur seberapa baik model dalam menemukan semua kasus positif. Ini penting dalam konteks medis, di mana kesalahan tidak mendeteksi kasus positif (*False Negative*) bisa berbahaya.
+
+  $$
+  \text{Recall} = \frac{TP}{TP + FN}
+  $$
+
+- **F1 Score** adalah rata-rata harmonik dari precision dan recall. F1 score memberikan gambaran menyeluruh terhadap keseimbangan kedua metrik tersebut.
+
+  $$
+  \text{F1 Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+  $$
+
+
+### Hasil Evaluasi
+
+Model terbaik dari proyek ini adalah **XGBoost tanpa tuning**, dengan hasil evaluasi sebagai berikut:
+
+- **Accuracy**: 96%
+- **Precision**: 91,89%
+- **Recall**: 87,18%
+- **F1 Score**: 89,47%
+
+Hasil ini menunjukkan bahwa model mampu mengklasifikasikan sebagian besar kasus dengan benar, terutama dalam mendeteksi pasien yang berisiko PCOS (recall tinggi). Precision yang tinggi juga menunjukkan bahwa sebagian besar prediksi positif memang benar adanya. F1 score yang tinggi mengindikasikan bahwa model memiliki keseimbangan yang baik antara precision dan recall, menjadikannya pilihan ideal untuk digunakan dalam konteks diagnosis awal PCOS.
+
+Dengan demikian, metrik evaluasi mendukung bahwa model XGBoost dapat diandalkan dalam membantu deteksi dini PCOS dengan akurasi tinggi dan tingkat kesalahan yang rendah.
+
